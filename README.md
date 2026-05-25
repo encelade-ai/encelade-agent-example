@@ -38,6 +38,12 @@ The hardcoded NovaTech notes are intentionally messy: scraped-looking fragments,
 2. Poll for completion: `GET /api/public/v1/sessions/{sessionId}` every 3 seconds until the session completes or fails. The example scripts also fall back to the older `/api/public/v1/projects/generate/session/{sessionId}` path if needed.
 3. Get deck link: read `shareLink` or `link` from the session response and open the interactive deck.
 
+## Claude Code skill
+
+A ready-to-use Claude Code skill that teaches Claude when and how to drive Encelade via this API. Drop it into your Claude Code skills directory or reference it from a custom agent.
+
+- [skills/encelade-agent-skill.md](skills/encelade-agent-skill.md)
+
 ## Links
 
 - API docs: [encelade.ai/docs](https://www.encelade.ai/docs)
