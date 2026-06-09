@@ -67,15 +67,15 @@ The agent runs a three-step REST workflow against the Encelade presentation gene
    { "sessionId": "sess_..." }
    ```
 
-2. **Poll for completion.** `GET /api/public/v1/sessions/{sessionId}` every 3 seconds until `status` is `completed` (or `succeeded`). The example scripts also fall back to the older `/api/public/v1/projects/generate/session/{sessionId}` path if needed.
+2. **Poll for completion.** `GET /api/public/v1/sessions/{sessionId}` every 3 seconds until `status` is `succeeded` (or `failed`). The example scripts also fall back to the older `/api/public/v1/projects/generate/session/{sessionId}` path if needed.
 
-3. **Open the deck.** Read `shareLink` (or `link`) from the completed session response:
+3. **Open the deck.** Read `link` from the succeeded session response. (`shareLink` is also returned when the project has a share token and an end-user email — the example request above doesn't set one, so use `link`.)
 
    ```json
-   { "status": "completed", "shareLink": "https://app.encelade.ai/p/..." }
+   { "status": "succeeded", "link": "https://app.encelade.ai/p/..." }
    ```
 
-The output is an **interactive, shareable web deck** — open the `shareLink` URL to view or share it; there's no file to download or render.
+The output is an **interactive, shareable web deck** — open the `link` URL to view or share it; there's no file to download or render.
 
 ## Claude Code skill
 
