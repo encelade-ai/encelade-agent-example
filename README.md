@@ -1,6 +1,10 @@
 # Encelade Agent Example
 
-See how an AI agent hands off research to Encelade and gets back an interactive deck.
+A working example of generating presentations from an AI agent's output via the **Encelade presentation generation API** (REST), with runnable agents in both **Python** and **TypeScript**. It hands a messy blob of research notes to Encelade and gets back a polished, interactive web deck — the same flow any agent or backend can use to produce slides programmatically.
+
+## What is Encelade?
+
+Encelade is a presentation generation platform that turns prompts, research, and AI agent output into interactive, shareable decks (slides). This repo is a minimal, end-to-end example of calling its public REST API so an agent — or any backend — can generate slides programmatically.
 
 ## Prerequisites
 
@@ -34,9 +38,44 @@ The hardcoded NovaTech notes are intentionally messy: scraped-looking fragments,
 
 ## How it works
 
-1. Send data: `POST /api/public/v1/projects/generate` with the research blob, topic, and outline hints.
-2. Poll for completion: `GET /api/public/v1/sessions/{sessionId}` every 3 seconds until the session completes or fails. The example scripts also fall back to the older `/api/public/v1/projects/generate/session/{sessionId}` path if needed.
-3. Get deck link: read `shareLink` or `link` from the session response and open the interactive deck.
+The agent runs a three-step REST workflow against the Encelade presentation generation API.
+
+1. **Send the research.** `POST /api/public/v1/projects/generate` with your API key in the `x-api-key` header, passing the topic, outline hints, and raw notes as supporting material:
+
+   ```json
+   {
+     "topic": "NovaTech investor update",
+     "outlineHints": [
+       "Company snapshot and mission",
+       "Traction and key metrics",
+       "Funding history and the ask"
+     ],
+     "supportingMaterials": [
+       {
+         "title": "NovaTech raw research notes",
+         "notes": "ARR $2.4M (Q3), founders ex-Stripe + ex-Palantir, ..."
+       }
+     ],
+     "verbosity": "balanced",
+     "pageCount": "auto"
+   }
+   ```
+
+   The response returns a session id:
+
+   ```json
+   { "sessionId": "sess_..." }
+   ```
+
+2. **Poll for completion.** `GET /api/public/v1/sessions/{sessionId}` every 3 seconds until `status` is `completed` (or `succeeded`). The example scripts also fall back to the older `/api/public/v1/projects/generate/session/{sessionId}` path if needed.
+
+3. **Open the deck.** Read `shareLink` (or `link`) from the completed session response:
+
+   ```json
+   { "status": "completed", "shareLink": "https://app.encelade.ai/p/..." }
+   ```
+
+The output is an **interactive, shareable web deck** — open the `shareLink` URL to view or share it; there's no file to download or render.
 
 ## Claude Code skill
 
@@ -44,8 +83,9 @@ A ready-to-use Claude Code skill that teaches Claude when and how to drive Encel
 
 - [skills/encelade-agent-skill.md](skills/encelade-agent-skill.md)
 
-## Links
+## Related
 
-- API docs: [encelade.ai/docs](https://www.encelade.ai/docs)
-- Sign up: [encelade.ai](https://www.encelade.ai)
-- For Agents: [encelade.ai/agents](https://www.encelade.ai/agents)
+- [Encelade for Agents](https://www.encelade.ai/agents) — generate presentations from AI agents and MCP clients.
+- [Encelade API docs](https://www.encelade.ai/docs) — full REST reference for the public API.
+- [n8n-nodes-encelade](https://github.com/encelade-ai/n8n-nodes-encelade) — community n8n node that calls the same Encelade presentation API for no-code workflows.
+- Sign up for an API key: [encelade.ai](https://www.encelade.ai)
